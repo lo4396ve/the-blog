@@ -1,12 +1,13 @@
 {
   "name": "the-blog",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
   "repository": "https://github.com/lo4396ve/the-blog.git",
   "author": "zhuqitao <1362335135@qq.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node react/build/start.js"
+    "start": "node react/build/start.js",
+    "release": "standard-version"
   },
   "dependencies": {
     "chalk": "^4.0.0",
@@ -28,6 +29,7 @@
     "cz-conventional-changelog": "3.2.0",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
+    "standard-version": "^8.0.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0",
