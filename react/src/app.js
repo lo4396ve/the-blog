@@ -1,6 +1,6 @@
 import React from 'react';
 
-const App = props => {
+const App = () => {
     return (
         <div className='app'>
             qywieraadaf aaaa

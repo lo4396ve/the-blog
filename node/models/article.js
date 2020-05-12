@@ -23,19 +23,15 @@ const articleSchema = new mongoose.Schema({
 
 
 articleSchema.statics.findByArticleId = function(id) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         try {
-            const result = await this.find({article_id: id});
-            resolve(result);
+            this.find({article_id: id}, (err, res) => {
+                if(err) return reject(err);
+                resolve(res);
+            });
         }
         catch(err) {
-            reject({
-                message: '查找数据失败',
-                err: err
-            });
-            console.log(
-                chalk.red(err)
-            )
+            reject(err);
         }
     })
 }
@@ -68,13 +64,7 @@ articleSchema.statics.addArticle = function(obj) {
             })
         }
         catch (err) {
-            reject({
-                message: '插入数据失败',
-                err: err
-            });
-            console.log(
-                chalk.red(err)
-            )
+            reject(err);
         }
     })
 }

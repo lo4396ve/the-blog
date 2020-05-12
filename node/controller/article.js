@@ -1,15 +1,12 @@
 const ArticleModel = require('../models/article')
 
 function addArticle(data) {
-    return new Promise(async (resolve, reject) => {
-        try{
-            const result = await ArticleModel.addArticle(data);
-            resolve(result)
-        }
-        catch(err) {
-            reject(err)
-        }
-    })
+    try{
+        ArticleModel.addArticle(data);
+    }
+    catch(err) {
+        console.log(err);
+    }
 }
 
 module.exports = {

@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node react/build/start.js",
+    "lint": "node_modules/.bin/eslint 'react/**' 'node/**'",
     "release": "standard-version"
   },
   "dependencies": {
@@ -27,6 +28,9 @@
     "clean-webpack-plugin": "^3.0.0",
     "cross-env": "^7.0.2",
     "cz-conventional-changelog": "3.2.0",
+    "eslint": "^7.0.0",
+    "eslint-plugin-html": "^6.0.2",
+    "eslint-plugin-react": "^7.19.0",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
     "standard-version": "^8.0.0",
@@ -42,6 +46,7 @@
   },
   "husky": {
     "hooks": {
+      "pre-commit": "yarn run lint",
       "commit-msg": "commitlint -e $GIT_PARAMS"
     }
   }
