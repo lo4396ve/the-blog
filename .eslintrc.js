@@ -24,7 +24,8 @@ module.exports = {
         "html"
     ],
     "rules": {
-        "no-unused-vars": "warn"
+        "no-unused-vars": "warn",
+        "react/prop-types": "warn",
     },
     "settings": {
         "react": {
