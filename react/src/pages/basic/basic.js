@@ -1,13 +1,21 @@
-import React, {useState} from 'react';
-import {Route, Switch, Redirect, BrowserRouter} from 'react-router-dom';
-import Home from './components/home/index'
+import React from 'react';
+import {Switch, Redirect, Link} from 'react-router-dom';
+import {RouteWithSubRoutes} from '../../router/index';
 function Basic(props) {
     return (
         <div className="basic-layout">
             <div>header</div>
+            <Link to="/basic/home">home</Link>
             <Switch>
-                <Route path="/basic/home" component={Home}/>
-                {/* <Redirect from="/" to="/basic" exact={true} /> */}
+                {
+                    props.routes.map(route => {
+                        console.log('route', route)
+                        return (
+                            <RouteWithSubRoutes {...route} key={route.path}/>
+                        )
+                    })
+                }
+                {/* <Redirect from="/basic" to="/basic/home" /> */}
             </Switch>
             
             <div>footer</div>

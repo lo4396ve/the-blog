@@ -21,7 +21,7 @@ const devConfig = {
         // noInfo: true,
         stats: 'minimal',
         open: true,
-        historyApiFallback: true
+        // historyApiFallback: true
         // hotOnly: true,
         // compress: true,
         // color: true,
