@@ -1,10 +1,12 @@
 import React from 'react';
 import {Switch, Redirect, Link} from 'react-router-dom';
 import {RouteWithSubRoutes} from '../../router/index';
+import Tabbar from '../../components/tabbar/index';
+import './basic.scss';
 function Basic(props) {
     return (
         <div className="basic-layout">
-            <div>header</div>
+            <div className="header">header</div>
             <Link to="/basic/home">home</Link>
             <Switch>
                 {
@@ -18,7 +20,7 @@ function Basic(props) {
                 {/* <Redirect from="/basic" to="/basic/home" /> */}
             </Switch>
             
-            <div>footer</div>
+            <Tabbar></Tabbar>
         </div>
     )
 }
