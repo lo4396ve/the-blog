@@ -5,6 +5,7 @@ import loadable from "@loadable/component";
 // import Home from '../pages/basic/components/home/index';
 const Basic = loadable(() => import(/* webpackChunkName: 'basic' */ "../pages/basic/basic"));
 const Home = loadable(() => import(/* webpackChunkName: 'basic' */ "../pages/basic/components/home/index"));
+const MyHome = loadable(() => import(/* webpackChunkName: 'basic' */ "../pages/basic/components/MyHome/index"));
 const routes = [
     {
       path: "/basic",
@@ -12,7 +13,13 @@ const routes = [
       routes: [
         {
           path: "/basic/home",
-          component: Home
+          component: Home,
+          routes: [
+            {
+              path: "/basic/home/myhome",
+              component: MyHome
+            }
+          ]
         }
       ]
     },

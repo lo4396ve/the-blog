@@ -35,5 +35,4 @@ const devConfig = {
     ]
 }
 const config = merge(devConfig, baseConfig);
-console.log(config.module.rules);
 module.exports = config;
