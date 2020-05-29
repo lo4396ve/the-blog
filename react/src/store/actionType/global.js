@@ -1,0 +1,1 @@
+export const GLOBAL_ACTION = 'GLOBAL_ACTION'

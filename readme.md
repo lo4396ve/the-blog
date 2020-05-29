@@ -1,4 +1,4 @@
-# 从零搭建react环境
+
 ## 基础环境搭建
 ### 创建项目 安装react react-dom
 ```
@@ -167,8 +167,122 @@ commitizen提供git cz命令代替git commit命令，cz-conventional-changelog�
 
 ### 功能扩展
 #### 添加路由
+
 * 安装react-router-dom
 ```
 yarn add react-router-dom
 ```
+* 路由设计
+以便项目管理和全局把握所有页面的从属关系，抽离出一个路由配置文件是一个不错的方案。
+
+##### 路由配置文件
+借鉴官方文档提供的示例方案，router/index.js：
+```
+const routes = [
+    {
+      path: "/basic",
+      component: Basic,
+      routes: [
+        {
+          path: "/basic/home",
+          component: Home,
+        }
+      ]
+    },
+];
+function RouteWithSubRoutes(route) {
+    return (
+        <Route
+            path={route.path}
+            render={props => (
+              <route.component {...props} routes={route.routes} />
+            )}
+        />
+    )
+}
+export {
+    routes,
+    RouteWithSubRoutes
+}
+```
+项目入口文件index.js：
+```
+import App from './app';
+import {HashRouter} from 'react-router-dom';
+ReactDOM.render(
+  <HashRouter>
+		<App />
+  </HashRouter>
+, document.getElementById('root'))
+```
+app.js:
+```
+import {routes, RouteWithSubRoutes} from './router/index';
+const App = () => {
+    return (
+        <div className='app'>
+            <Switch>
+                {
+                    routes.map(route => {
+                        return (
+                            <RouteWithSubRoutes {...route} key={route.path}/>
+                        )
+                    })
+                }
+                <Redirect from="/" to="/basic" />
+            </Switch>
+        </div>
+    )
+}
+
+export default App;
+```
+
+#### redux
+不要为了使用redux而使用redux，滥用redux随着项目的开发，其将成为一个沉重的维护包袱。根据我自己的开发经验，建议只把全局的数据使用redux管理。
+
+像用户基本信息(用户名、头像等)，定位信息类似这种全局数据用redux管理很合理。
+
+还有一些虽然不是像用户基本信息那种的全局数据，但有两个及以上的业务场景会交叉使用到，而且随着开发业务范围扩大，将来可能还会有其他业务模块会使用的数据，也建议用redux管理。
+
+授权登录信息(比如token)更多的是redux配合localstoreage和cookie管理。
+
+> react结合redux的配置包括4步，1、创建action;2、创建reducer;3、createStore创建一个 Redux store;4、Provide组件把store注入根组件
+* 安装相关依赖
+```
+yarn add redux react-redux redux-thunk
+```
+* action和action-type
+根据官方的建议，action-type使用大写常量，方便统一管理
+* reducer
+```
+const rootReducer = combineReducers({
+    global,
+    其他的reducer
+})
+export default rootReducer;
+```
+* createStore
+```
+const store = createStore(
+    rootReducer,
+    applyMiddleware(thunkMiddleware)
+)
+
+export default store;
+```
+* Provider
+根组件注入store，搭配路由还有其他方式，比如使用connect-react-router插件
+```
+ReactDOM.render(
+  <Provider store={store}>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </Provider>
+  
+, document.getElementById('root'))
+```
+
+
 

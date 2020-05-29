@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Switch, Redirect, Link} from 'react-router-dom';
+import {connect} from 'react-redux'
 import {RouteWithSubRoutes} from '../../../../router/index';
 function Home (props) {
     return (
@@ -19,4 +20,10 @@ function Home (props) {
         </div>
     )
 }
-export default Home;
+
+function mapStateToProps(state) {
+    console.log('mapStateToProps', state);
+    const {global} = state;
+    return {global}
+}
+export default connect(mapStateToProps)(Home);
