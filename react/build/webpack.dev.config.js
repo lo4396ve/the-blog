@@ -13,7 +13,8 @@ const devConfig = {
     },
     output: {
         filename: 'bundle.js',
-        // path: path.resolve(__dirname, 'dist')
+        // path: path.resolve(process.cwd(), 'react/dist'),
+        // chunkFilename: '[name].t.bundle.js'
     },
     
     devServer: {

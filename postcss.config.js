@@ -19,4 +19,4 @@ module.exports = {
             mediaQuery: false       // 允许在媒体查询中转换`px`
         }
     }
-  }
+}
