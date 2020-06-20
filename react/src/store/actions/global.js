@@ -5,10 +5,11 @@ const globalAction = function(payload) {
         payload
     }
 }
-const globalActionAsync = function(payload) {
-    return (dispatch, getState) => {}
-}
+// const globalActionAsync = function(payload) {
+//     return (dispatch, getState) => {}
+// }
 
 export {
-    globalAction
+    globalAction,
+    // globalActionAsync
 }

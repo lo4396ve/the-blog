@@ -4,10 +4,10 @@ import loadable from "@loadable/component";
 const Basic = loadable(() => import(/* webpackChunkName: 'basic' */ "../pages/basic/basic"));
 const Home = loadable(() => import(/* webpackChunkName: 'basic' */ '../pages/home/index'))
 const Me = loadable(() => import(/* webpackChunkName: 'basic' */ '../pages/me/index'))
-import homeIcon from '../static/image/home.png'
-import homeIconActive from '../static/image/rhome.png'
-import meIcon from '../static/image/new-order.png'
-import meIconActive from '../static/image/new-rorder.png'
+import homeIcon from '../assets/images/home.png'
+import homeIconActive from '../assets/images/rhome.png'
+import meIcon from '../assets/images/new-order.png'
+import meIconActive from '../assets/images/new-rorder.png'
 
 const tabbarRouter = [
   {
