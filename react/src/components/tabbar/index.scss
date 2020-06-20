@@ -23,6 +23,9 @@
     }
     .tab-name{
       font-size: 12PX;
+      &.active{
+        color: red;
+      }
     }
   }
 }

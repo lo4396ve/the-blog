@@ -12,7 +12,6 @@ function Basic(props) {
                 <Switch>
                     {
                         props.routes.map(route => {
-                            console.log('route', route)
                             return (
                                 <RouteWithSubRoutes {...route} key={route.path}/>
                             )
