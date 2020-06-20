@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/zhuqitao/.nvm/versions/node/v14.2.0/bin/node /usr/local/bin/yarn add eeslint-plugin-react-app
+  /Users/zhuqitao/.nvm/versions/node/v14.2.0/bin/node /usr/local/bin/yarn add file-loader -D
 
 PATH: 
   /Users/zhuqitao/.nvm/versions/node/v14.2.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/Users/zhuqitao/.nvm/versions/node/v14.2.0/bin:/Users/zhuqitao/Library/Android/sdk/tools:/Users/zhuqitao/Library/Android/sdk/tools/bin:/Users/zhuqitao/Library/Android/sdk/platform-tools:/Users/zhuqitao/Library/Android/sdk/emulator:/usr/local/mysql/bin:/usr/local/apache-maven-3.6.1/bin:/usr/local/opt/redis@4.0/bin:/Users/zhuqitao/Library/Android/sdk/tools:/Users/zhuqitao/Library/Android/sdk/tools/bin:/Users/zhuqitao/Library/Android/sdk/platform-tools:/Users/zhuqitao/Library/Android/sdk/emulator:/usr/local/mysql/bin:/usr/local/apache-maven-3.6.1/bin:/usr/local/opt/redis@4.0/bin
@@ -14,17 +14,8 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/eeslint-plugin-react-app: Not found
-      at Request.params.callback [as _callback] (/usr/local/lib/node_modules/yarn/lib/cli.js:66091:18)
-      at Request.self.callback (/usr/local/lib/node_modules/yarn/lib/cli.js:129590:22)
-      at Request.emit (events.js:315:20)
-      at Request.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:130562:10)
-      at Request.emit (events.js:315:20)
-      at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:130484:12)
-      at Object.onceWrapper (events.js:421:28)
-      at IncomingMessage.emit (events.js:327:22)
-      at endReadableNT (_stream_readable.js:1225:12)
-      at processTicksAndRejections (internal/process/task_queues.js:84:21)
+  Error: connect ECONNREFUSED 104.16.21.35:443
+      at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1142:16)
 
 npm manifest: 
   {
@@ -48,7 +39,10 @@ npm manifest:
       "mongoose": "^5.9.13",
       "react": "^16.13.1",
       "react-dom": "^16.13.1",
-      "react-router-dom": "^5.2.0"
+      "react-redux": "^7.2.0",
+      "react-router-dom": "^5.2.0",
+      "redux": "^4.0.5",
+      "redux-thunk": "^2.3.0"
     },
     "devDependencies": {
       "@babel/core": "^7.9.6",
@@ -57,6 +51,7 @@ npm manifest:
       "@babel/preset-react": "^7.9.4",
       "@commitlint/cli": "^8.3.5",
       "@commitlint/config-conventional": "^8.3.4",
+      "babel-eslint": "^10.1.0",
       "babel-loader": "^8.1.0",
       "clean-webpack-plugin": "^3.0.0",
       "cross-env": "^7.0.2",
@@ -65,7 +60,7 @@ npm manifest:
       "cz-conventional-changelog": "3.2.0",
       "eslint": "^7.0.0",
       "eslint-plugin-html": "^6.0.2",
-      "eslint-plugin-react": "^7.19.0",
+      "eslint-plugin-react": "^7.20.0",
       "html-webpack-plugin": "^4.3.0",
       "husky": "^4.2.5",
       "node-sass": "^4.14.1",
@@ -358,7 +353,7 @@ Lockfile:
       chalk "^2.0.0"
       js-tokens "^4.0.0"
   
-  "@babel/parser@^7.8.6", "@babel/parser@^7.9.6":
+  "@babel/parser@^7.7.0", "@babel/parser@^7.8.6", "@babel/parser@^7.9.6":
     version "7.9.6"
     resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.9.6.tgz#3b1bbb30dabe600cd72db58720998376ff653bc7"
     integrity sha512-AoeIEJn8vt+d/6+PXDRPaksYhnlbMIiejioBZvvMQsOjW/JYK6k/0dKnvvP3EhK5GfMBWDPtrxRtegWdAcdq9Q==
@@ -906,7 +901,7 @@ Lockfile:
       "@babel/parser" "^7.8.6"
       "@babel/types" "^7.8.6"
   
-  "@babel/traverse@^7.8.3", "@babel/traverse@^7.9.6":
+  "@babel/traverse@^7.7.0", "@babel/traverse@^7.8.3", "@babel/traverse@^7.9.6":
     version "7.9.6"
     resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.9.6.tgz#5540d7577697bf619cc57b92aa0f1c231a94f442"
     integrity sha512-b3rAHSjbxy6VEAvlxM8OV/0X4XrG72zoxme6q1MOoe2vd0bEc+TwayhuC1+Dfgqh1QEG+pj7atQqvUprHIccsg==
@@ -921,7 +916,7 @@ Lockfile:
       globals "^11.1.0"
       lodash "^4.17.13"
   
-  "@babel/types@^7.4.4", "@babel/types@^7.8.3", "@babel/types@^7.8.6", "@babel/types@^7.9.0", "@babel/types@^7.9.5", "@babel/types@^7.9.6":
+  "@babel/types@^7.4.4", "@babel/types@^7.7.0", "@babel/types@^7.8.3", "@babel/types@^7.8.6", "@babel/types@^7.9.0", "@babel/types@^7.9.5", "@babel/types@^7.9.6":
     version "7.9.6"
     resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.9.6.tgz#2c5502b427251e9de1bd2dff95add646d95cc9f7"
     integrity sha512-qxXzvBO//jO9ZnoasKF1uJzHd2+M6Q2ZPIVfnFps8JJvXy0ZBbwbNOmE6SGIY5XOY6d1Bo5lb9d9RJ8nv3WSeA==
@@ -1676,6 +1671,18 @@ Lockfile:
     version "1.9.1"
     resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.1.tgz#7e33d8f7d449b3f673cd72deb9abdc552dbe528e"
     integrity sha512-wMHVg2EOHaMRxbzgFJ9gtjOOCrI80OHLG14rxi28XwOW8ux6IiEbRCGGGqCtdAIg4FQCbW20k9RsT4y3gJlFug==
+  
+  babel-eslint@^10.1.0:
+    version "10.1.0"
+    resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-10.1.0.tgz#6968e568a910b78fb3779cdd8b6ac2f479943232"
+    integrity sha512-ifWaTHQ0ce+448CYop8AdrQiBsGrnC+bMgfyKFdi6EsPLTAWG+QfyDeM6OH+FmWnKvEq5NnBMLvlBUPKQZoDSg==
+    dependencies:
+      "@babel/code-frame" "^7.0.0"
+      "@babel/parser" "^7.7.0"
+      "@babel/traverse" "^7.7.0"
+      "@babel/types" "^7.7.0"
+      eslint-visitor-keys "^1.0.0"
+      resolve "^1.12.0"
   
   babel-loader@^8.1.0:
     version "8.1.0"
@@ -3669,10 +3676,10 @@ Lockfile:
     dependencies:
       htmlparser2 "^4.1.0"
   
-  eslint-plugin-react@^7.19.0:
-    version "7.19.0"
-    resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.19.0.tgz#6d08f9673628aa69c5559d33489e855d83551666"
-    integrity sha512-SPT8j72CGuAP+JFbT0sJHOB80TX/pu44gQ4vXH/cq+hQTiY2PuZ6IHkqXJV6x1b28GDdo1lbInjKUrrdUf0LOQ==
+  eslint-plugin-react@^7.20.0:
+    version "7.20.0"
+    resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.20.0.tgz#f98712f0a5e57dfd3e5542ef0604b8739cd47be3"
+    integrity sha512-rqe1abd0vxMjmbPngo4NaYxTcR3Y4Hrmc/jg4T+sYz63yqlmJRknpEQfmWY+eDWPuMmix6iUIK+mv0zExjeLgA==
     dependencies:
       array-includes "^3.1.1"
       doctrine "^2.1.0"
@@ -3683,7 +3690,6 @@ Lockfile:
       object.values "^1.1.1"
       prop-types "^15.7.2"
       resolve "^1.15.1"
-      semver "^6.3.0"
       string.prototype.matchall "^4.0.2"
       xregexp "^4.3.0"
   
@@ -3710,7 +3716,7 @@ Lockfile:
     dependencies:
       eslint-visitor-keys "^1.1.0"
   
-  eslint-visitor-keys@^1.1.0:
+  eslint-visitor-keys@^1.0.0, eslint-visitor-keys@^1.1.0:
     version "1.1.0"
     resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.1.0.tgz#e2a82cea84ff246ad6fb57f9bde5b46621459ec2"
     integrity sha512-8y9YjtM1JBJU/A9Kc+SbaOV4y29sSWckBwMHa+FGtVj5gN/sbnKDf6xJUl+8g7FAij9LVaP8C24DUiH/f/2Z9A==
@@ -4647,7 +4653,7 @@ Lockfile:
       minimalistic-assert "^1.0.0"
       minimalistic-crypto-utils "^1.0.1"
   
-  hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.3.1:
+  hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.1:
     version "3.3.2"
     resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
     integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
@@ -8104,10 +8110,21 @@ Lockfile:
       prop-types "^15.6.2"
       scheduler "^0.19.1"
   
-  react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
+  react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.9.0:
     version "16.13.1"
     resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
     integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
+  
+  react-redux@^7.2.0:
+    version "7.2.0"
+    resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.0.tgz#f970f62192b3981642fec46fd0db18a074fe879d"
+    integrity sha512-EvCAZYGfOLqwV7gh849xy9/pt55rJXPwmYvI4lilPM5rUT/1NxuuN59ipdBksRVSvz0KInbPnp4IfoXJXCqiDA==
+    dependencies:
+      "@babel/runtime" "^7.5.5"
+      hoist-non-react-statics "^3.3.0"
+      loose-envify "^1.4.0"
+      prop-types "^15.7.2"
+      react-is "^16.9.0"
   
   react-router-dom@^5.2.0:
     version "5.2.0"
@@ -8285,6 +8302,19 @@ Lockfile:
     integrity sha512-Hl/tuV2VDgWgCSEeWMLwxLZqX7OK59eU1guxXsRKTAyeYimivsKdtcV4fu3r710tpG5GmDKDhQ0HSZLExnNmyQ==
     dependencies:
       balanced-match "^1.0.0"
+  
+  redux-thunk@^2.3.0:
+    version "2.3.0"
+    resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.3.0.tgz#51c2c19a185ed5187aaa9a2d08b666d0d6467622"
+    integrity sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw==
+  
+  redux@^4.0.5:
+    version "4.0.5"
+    resolved "https://registry.yarnpkg.com/redux/-/redux-4.0.5.tgz#4db5de5816e17891de8a80c424232d06f051d93f"
+    integrity sha512-VSz1uMAH24DM6MF72vcojpYPtrTUu3ByVWfPL1nPfVRb5mZVTve5GnNCUV53QM/BZ66xfWrm0CTWoM+Xlz8V1w==
+    dependencies:
+      loose-envify "^1.4.0"
+      symbol-observable "^1.2.0"
   
   regenerate-unicode-properties@^8.2.0:
     version "8.2.0"
@@ -8510,7 +8540,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
     integrity sha1-LGN/53yJOv0qZj/iGqkIAGjiBSo=
   
-  resolve@^1.1.6, resolve@^1.10.0, resolve@^1.15.1, resolve@^1.3.2:
+  resolve@^1.1.6, resolve@^1.10.0, resolve@^1.12.0, resolve@^1.15.1, resolve@^1.3.2:
     version "1.17.0"
     resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.17.0.tgz#b25941b54968231cc2d1bb76a79cb7f2c0bf8444"
     integrity sha512-ic+7JYiV8Vi2yzQGFWOkiZD5Z9z7O2Zhm9XMaTxdJExKasieFCr+yXZ/WmXsckHiKl12ar0y6XiXDx3m4RHn1w==
@@ -9439,6 +9469,11 @@ Lockfile:
       stable "^0.1.8"
       unquote "~1.1.1"
       util.promisify "~1.0.0"
+  
+  symbol-observable@^1.2.0:
+    version "1.2.0"
+    resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
+    integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==
   
   table@^5.2.3:
     version "5.4.6"

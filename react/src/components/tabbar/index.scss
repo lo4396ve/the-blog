@@ -1,0 +1,28 @@
+.tabbar{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  border-top: solid 1px #eee;
+  .tab-item{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &:not(:last-child) {
+      border-right: solid 1px #eee;
+    }
+    .tab-icon{
+      width: 40px;
+      height: 40px;
+    }
+    .tab-name{
+      font-size: 12PX;
+    }
+  }
+}

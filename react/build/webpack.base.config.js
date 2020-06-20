@@ -27,6 +27,20 @@ module.exports = {
                     'postcss-loader',
                     'sass-loader'
                 ]
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif)$/,
+                include: path.resolve(process.cwd(), 'react/src'),
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 8192,
+                            // name: 'static/image/[name].[ext]',
+                            // publicPath: '/static'
+                        }
+                    }
+                ]
             }
         ]
     },

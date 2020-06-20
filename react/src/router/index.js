@@ -1,27 +1,35 @@
 import React from 'react';
 import {Route} from 'react-router-dom';
 import loadable from "@loadable/component";
-// import Basic from '../pages/basic/basic';
-// import Home from '../pages/basic/components/home/index';
 const Basic = loadable(() => import(/* webpackChunkName: 'basic' */ "../pages/basic/basic"));
-const Home = loadable(() => import(/* webpackChunkName: 'basic' */ "../pages/basic/components/home/index"));
-const MyHome = loadable(() => import(/* webpackChunkName: 'basic' */ "../pages/basic/components/MyHome/index"));
+const Home = loadable(() => import(/* webpackChunkName: 'basic' */ '../pages/home/index'))
+const Me = loadable(() => import(/* webpackChunkName: 'basic' */ '../pages/me/index'))
+import homeIcon from '../static/image/home.png'
+import homeIconActive from '../static/image/rhome.png'
+import meIcon from '../static/image/new-order.png'
+import meIconActive from '../static/image/new-rorder.png'
+
+const tabbarRouter = [
+  {
+    path: "/basic/home",
+    tabName: '首页',
+    component: Home,
+    icon: homeIcon,
+    iconActive: homeIconActive
+  },
+  {
+    path: "/basic/me",
+    tabName: '我的',
+    component: Me,
+    icon: meIcon,
+    iconActive: meIconActive
+  }
+]
 const routes = [
     {
       path: "/basic",
       component: Basic,
-      routes: [
-        {
-          path: "/basic/home",
-          component: Home,
-          routes: [
-            {
-              path: "/basic/home/myhome",
-              component: MyHome
-            }
-          ]
-        }
-      ]
+      routes: tabbarRouter
     },
 ];
 
@@ -38,5 +46,6 @@ function RouteWithSubRoutes(route) {
 
 export {
     routes,
+    tabbarRouter,
     RouteWithSubRoutes
 }
