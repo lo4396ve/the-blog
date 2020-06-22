@@ -35,8 +35,9 @@ module.exports = {
                     {
                         loader: 'url-loader',
                         options: {
-                            limit: 8192,
-                            // name: 'static/image/[name].[ext]',
+                            limit: 10,
+                            name: '[name].[hash:8].[ext]',
+                            esModule: false
                             // publicPath: '/static'
                         }
                     }

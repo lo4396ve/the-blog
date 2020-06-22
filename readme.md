@@ -83,7 +83,28 @@ app.listen('8080', () => {
 })
 ```
 > 到此，一个简单的react开发环境搭建成功，yarn start即可启动react本地开发环境
-
+## webpack
+### 静态资源处理
+#### 1、图片
+```
+{
+    test: /\.(png|jpg|jpeg|gif)$/,
+    include: path.resolve(process.cwd(), 'react/src'),
+    use: [
+        {
+            loader: 'url-loader',
+            options: {
+                limit: 10,
+                name: '[name].[hash:8].[ext]',
+                esModule: false
+            }
+        }
+    ]
+}
+```
+如果使用<img className="back" src={require('***')} />引入图片，使用最新版本url-loader和file-loader需要添加esModule: false。
+如果不添加esModule: false，则需要把src改成src={require('***').default}。
+url-loader 默认使用 esmodule 语法， 而require() 为 common JS规范。
 ## 团队规范
 ### 1、安装eslint相关依赖
 ```

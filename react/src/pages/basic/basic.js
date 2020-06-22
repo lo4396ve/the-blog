@@ -6,7 +6,7 @@ import Header from '../../components/Header/index';
 import './basic.scss';
 function Basic(props) {
     return (
-        <div className="basic-layout">
+        <div className="basic">
             <Header></Header>
             <div className="content">
                 <Switch>

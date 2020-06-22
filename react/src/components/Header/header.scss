@@ -1,0 +1,33 @@
+.header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    background-color: #fff;
+    border-bottom: solid 1px #eee;
+    .header-left, .header-right, .header-content{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .header-left{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width: 20%;
+        .back{
+            width: 40px;
+            height: 40px;
+        }
+    }
+    .header-content{
+        width: 60%;
+    }
+    .header-right{
+        width: 20%
+    }
+}

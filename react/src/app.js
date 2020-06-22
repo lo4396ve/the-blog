@@ -2,6 +2,7 @@ import React from 'react';
 import {Switch, Route, Redirect, Link} from 'react-router-dom'
 import {routes, RouteWithSubRoutes} from './router/index';
 import Basic from './pages/basic/basic'
+import './static/style/common.scss'
 
 const App = () => {
     return (
