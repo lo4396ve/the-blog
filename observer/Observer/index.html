@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Observe | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析 从new Vue源码还原">
+    
+    <link rel="preload" href="/the-blog/assets/css/0.styles.5847df6a.css" as="style"><link rel="preload" href="/the-blog/assets/js/app.be1bf052.js" as="script"><link rel="preload" href="/the-blog/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/the-blog/assets/js/16.8d119a8f.js" as="script"><link rel="prefetch" href="/the-blog/assets/js/10.d64c4eff.js"><link rel="prefetch" href="/the-blog/assets/js/11.71c5d6b7.js"><link rel="prefetch" href="/the-blog/assets/js/12.11daf096.js"><link rel="prefetch" href="/the-blog/assets/js/13.f69b548d.js"><link rel="prefetch" href="/the-blog/assets/js/14.d1ad4cff.js"><link rel="prefetch" href="/the-blog/assets/js/15.8509a816.js"><link rel="prefetch" href="/the-blog/assets/js/17.af1786ea.js"><link rel="prefetch" href="/the-blog/assets/js/18.a98290de.js"><link rel="prefetch" href="/the-blog/assets/js/19.19f57d70.js"><link rel="prefetch" href="/the-blog/assets/js/20.280bb4ea.js"><link rel="prefetch" href="/the-blog/assets/js/21.6e34cef2.js"><link rel="prefetch" href="/the-blog/assets/js/22.6a817ce7.js"><link rel="prefetch" href="/the-blog/assets/js/23.b2f20c9f.js"><link rel="prefetch" href="/the-blog/assets/js/24.1c74258d.js"><link rel="prefetch" href="/the-blog/assets/js/25.9372330d.js"><link rel="prefetch" href="/the-blog/assets/js/3.e85ca41f.js"><link rel="prefetch" href="/the-blog/assets/js/4.05f254cc.js"><link rel="prefetch" href="/the-blog/assets/js/5.aa528bc2.js"><link rel="prefetch" href="/the-blog/assets/js/6.73a8f323.js"><link rel="prefetch" href="/the-blog/assets/js/7.f3388b10.js"><link rel="prefetch" href="/the-blog/assets/js/8.5af9c977.js"><link rel="prefetch" href="/the-blog/assets/js/9.12eb1627.js">
+    <link rel="stylesheet" href="/the-blog/assets/css/0.styles.5847df6a.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/the-blog/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/the-blog/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>准备工作</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/the-blog/simple/" class="sidebar-link">提取简易版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>创建Vue实例</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Observer</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/the-blog/observer/state/" class="sidebar-link">state</a></li><li><a href="/the-blog/observer/Observer/" aria-current="page" class="active sidebar-link">Observe</a></li><li><a href="/the-blog/observer/Dep/" class="sidebar-link">Dep</a></li><li><a href="/the-blog/observer/Watcher/" class="sidebar-link">Watcher</a></li><li><a href="/the-blog/observer/Notify/" class="sidebar-link">Notify</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="observe"><a href="#observe" class="header-anchor">#</a> Observe</h1> <p>打开mysrc/core/observer/index.js，找到observe方法的定义：</p> <div class="language- extra-class"><pre class="language-text"><code>export function observe (value, asRootData) {
+  if (!isObject(value) || value instanceof VNode) {
+    return
+  }
+  let ob
+  if (hasOwn(value, '__ob__') &amp;&amp; value.__ob__ instanceof Observer) {
+    ob = value.__ob__
+  } else if (
+    shouldObserve &amp;&amp;
+    !isServerRendering() &amp;&amp;
+    (Array.isArray(value) || isPlainObject(value)) &amp;&amp;
+    Object.isExtensible(value) &amp;&amp;
+    !value._isVue
+  ) {
+    ob = new Observer(value)
+  }
+  if (asRootData &amp;&amp; ob) {
+    ob.vmCount++
+  }
+  return ob
+}
+</code></pre></div><p>observe首先判断要操作的对象如果有__ob__属性并且value.__ob__是Observer类型的，说明该对象已经是一个响应式数据了，不需要再操作了。否则创建Observer实例对象。</p> <p>Observer类的实现：</p> <div class="language- extra-class"><pre class="language-text"><code>export class Observer {
+  
+  constructor (value) {
+    this.value = value
+    this.dep = new Dep()
+    this.vmCount = 0  // number of vms that have this object as root $data
+    def(value, '__ob__', this)
+    if (Array.isArray(value)) {
+      if (hasProto) {
+        protoAugment(value, arrayMethods)
+      } else {
+        copyAugment(value, arrayMethods, arrayKeys)
+      }
+      this.observeArray(value)
+    } else {
+      this.walk(value)
+    }
+  }
+
+  walk (obj) {
+    const keys = Object.keys(obj)
+    for (let i = 0; i &lt; keys.length; i++) {
+      defineReactive(obj, keys[i])
+    }
+  }
+
+  observeArray (items) {
+    for (let i = 0, l = items.length; i &lt; l; i++) {
+      observe(items[i])
+    }
+  }
+}
+</code></pre></div><p>首先通过def方法在对象上添加__ob__属性，并指向当前实例，说明该对象已经是一个响应式数据了。如果是数组类型，调用observeArray方法通过遍历加递归的方式，是得数组每一个数据都变成响应式数据，最终执行this.walk。walk会遍历对象每一个属性，并调用defineReactive方法。</p> <p>defineReactive：</p> <div class="language- extra-class"><pre class="language-text"><code>export function defineReactive (
+  obj,
+  key,
+  val,
+  customSetter,
+  shallow
+) {
+  const dep = new Dep()
+
+  const property = Object.getOwnPropertyDescriptor(obj, key)
+  if (property &amp;&amp; property.configurable === false) {
+    return
+  }
+
+  // cater for pre-defined getter/setters
+  const getter = property &amp;&amp; property.get
+  const setter = property &amp;&amp; property.set
+  if ((!getter || setter) &amp;&amp; arguments.length === 2) {
+    val = obj[key]
+  }
+
+  let childOb = !shallow &amp;&amp; observe(val)
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get: function reactiveGetter () {
+      const value = getter ? getter.call(obj) : val
+      if (Dep.target) {
+        dep.depend()
+        if (childOb) {
+          childOb.dep.depend()
+          if (Array.isArray(value)) {
+            dependArray(value)
+          }
+        }
+      }
+      return value
+    },
+    set: function reactiveSetter (newVal) {
+      const value = getter ? getter.call(obj) : val
+      /* eslint-disable no-self-compare */
+      if (newVal === value || (newVal !== newVal &amp;&amp; value !== value)) {
+        return
+      }
+      /* eslint-enable no-self-compare */
+      if (process.env.NODE_ENV !== 'production' &amp;&amp; customSetter) {
+        customSetter()
+      }
+      // #7981: for accessor properties without setter
+      if (getter &amp;&amp; !setter) return
+      if (setter) {
+        setter.call(obj, newVal)
+      } else {
+        val = newVal
+      }
+      childOb = !shallow &amp;&amp; observe(newVal)
+      dep.notify()
+    }
+  })
+}
+</code></pre></div><p>defineReactive方法首先会实例化一个Dep对象用来收集依赖，通过递归的方式对子对象调用observe方法，这样对象多层嵌套({a: {b: {c: '1'}}})的情况也能保证每个子属性都是响应式的。代码的核心是使用Object.defineProperty方法重写属性的get和set方法。在get方法中使用dep.depend进行依赖收集，在set方法中使用dep.notify通知订阅的事件。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/the-blog/observer/state/" class="prev">
+        state
+      </a></span> <span class="next"><a href="/the-blog/observer/Dep/">
+        Dep
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/the-blog/assets/js/app.be1bf052.js" defer></script><script src="/the-blog/assets/js/2.233f3245.js" defer></script><script src="/the-blog/assets/js/16.8d119a8f.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Notify | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析 从new Vue源码还原">
+    
+    <link rel="preload" href="/the-blog/assets/css/0.styles.5847df6a.css" as="style"><link rel="preload" href="/the-blog/assets/js/app.be1bf052.js" as="script"><link rel="preload" href="/the-blog/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/the-blog/assets/js/15.8509a816.js" as="script"><link rel="prefetch" href="/the-blog/assets/js/10.d64c4eff.js"><link rel="prefetch" href="/the-blog/assets/js/11.71c5d6b7.js"><link rel="prefetch" href="/the-blog/assets/js/12.11daf096.js"><link rel="prefetch" href="/the-blog/assets/js/13.f69b548d.js"><link rel="prefetch" href="/the-blog/assets/js/14.d1ad4cff.js"><link rel="prefetch" href="/the-blog/assets/js/16.8d119a8f.js"><link rel="prefetch" href="/the-blog/assets/js/17.af1786ea.js"><link rel="prefetch" href="/the-blog/assets/js/18.a98290de.js"><link rel="prefetch" href="/the-blog/assets/js/19.19f57d70.js"><link rel="prefetch" href="/the-blog/assets/js/20.280bb4ea.js"><link rel="prefetch" href="/the-blog/assets/js/21.6e34cef2.js"><link rel="prefetch" href="/the-blog/assets/js/22.6a817ce7.js"><link rel="prefetch" href="/the-blog/assets/js/23.b2f20c9f.js"><link rel="prefetch" href="/the-blog/assets/js/24.1c74258d.js"><link rel="prefetch" href="/the-blog/assets/js/25.9372330d.js"><link rel="prefetch" href="/the-blog/assets/js/3.e85ca41f.js"><link rel="prefetch" href="/the-blog/assets/js/4.05f254cc.js"><link rel="prefetch" href="/the-blog/assets/js/5.aa528bc2.js"><link rel="prefetch" href="/the-blog/assets/js/6.73a8f323.js"><link rel="prefetch" href="/the-blog/assets/js/7.f3388b10.js"><link rel="prefetch" href="/the-blog/assets/js/8.5af9c977.js"><link rel="prefetch" href="/the-blog/assets/js/9.12eb1627.js">
+    <link rel="stylesheet" href="/the-blog/assets/css/0.styles.5847df6a.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/the-blog/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/the-blog/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>准备工作</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/the-blog/simple/" class="sidebar-link">提取简易版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>创建Vue实例</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Observer</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/the-blog/observer/state/" class="sidebar-link">state</a></li><li><a href="/the-blog/observer/Observer/" class="sidebar-link">Observe</a></li><li><a href="/the-blog/observer/Dep/" class="sidebar-link">Dep</a></li><li><a href="/the-blog/observer/Watcher/" class="sidebar-link">Watcher</a></li><li><a href="/the-blog/observer/Notify/" aria-current="page" class="active sidebar-link">Notify</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="notify"><a href="#notify" class="header-anchor">#</a> Notify</h1> <p>这一节介绍响应式系统是如何派发通知的。</p> <p>回顾defineReactive方法中的set逻辑</p> <div class="language- extra-class"><pre class="language-text"><code>Object.defineProperty(obj, key, {
+  enumerable: true,
+  configurable: true,
+  get: function reactiveGetter () {
+    ...
+  },
+  set: function reactiveSetter (newVal) {
+    const value = getter ? getter.call(obj) : val
+    if (newVal === value || (newVal !== newVal &amp;&amp; value !== value)) {
+      return
+    }
+    if (process.env.NODE_ENV !== 'production' &amp;&amp; customSetter) {
+      customSetter()
+    }
+    // #7981: for accessor properties without setter
+    if (getter &amp;&amp; !setter) return
+    if (setter) {
+      setter.call(obj, newVal)
+    } else {
+      val = newVal
+    }
+    childOb = !shallow &amp;&amp; observe(newVal)
+    dep.notify()
+  }
+})
+</code></pre></div><p>判断新旧值是否发生变化，如果没变化不做处理。如果在非生产环境用户自定义了customSetter方法，执行自定义setter方法，最后通过observe(newVal)使新设置的值变成响应式数据，最关键一步是调用dep.notify()方法。</p> <p>打开mysrc/core/observer/dep.js，找到notify方法</p> <div class="language- extra-class"><pre class="language-text"><code>notify () {
+  // stabilize the subscriber list first
+  const subs = this.subs.slice()
+  if (process.env.NODE_ENV !== 'production' &amp;&amp; !config.async) {
+    subs.sort((a, b) =&gt; a.id - b.id)
+  }
+  for (let i = 0, l = subs.length; i &lt; l; i++) {
+    subs[i].update()
+  }
+}
+</code></pre></div><p>其实就是把数据收集的Watcher实例遍历执行update()方法。</p> <p>在mysrc/core/observer/watcher.js中查找update方法：</p> <div class="language- extra-class"><pre class="language-text"><code>update () {
+  /* istanbul ignore else */
+  if (this.lazy) {
+    this.dirty = true
+  } else if (this.sync) {
+    this.run()
+  } else {
+    queueWatcher(this)
+  }
+}
+</code></pre></div><p>lazy的作用与计算属性computed有关，这个后面再详细介绍，此时lazy为false，sync代表同步更新这里也不展开介绍，sync的值也为false，所以最终执行的是queueWatcher。</p> <p>打开mysrc/core/observer/scheduler.js查看queueWatcher方法</p> <div class="language- extra-class"><pre class="language-text"><code>const queue = []
+export function queueWatcher (watcher) {
+  const id = watcher.id
+  if (has[id] == null) {
+    has[id] = true
+    if (!flushing) {
+      queue.push(watcher)
+    } else {
+      // if already flushing, splice the watcher based on its id
+      // if already past its id, it will be run next immediately.
+      let i = queue.length - 1
+      while (i &gt; index &amp;&amp; queue[i].id &gt; watcher.id) {
+        i--
+      }
+      queue.splice(i + 1, 0, watcher)
+    }
+    // queue the flush
+    if (!waiting) {
+      waiting = true
+
+      if (process.env.NODE_ENV !== 'production' &amp;&amp; !config.async) {
+        flushSchedulerQueue()
+        return
+      }
+      nextTick(flushSchedulerQueue)
+    }
+  }
+}
+</code></pre></div><p>该文件维护了一个队列，所有需要执行的Watcher都放入这个队列，在入队之前先对去重做处理，最后通过nextTick执行flushSchedulerQueue。nextTick的目的是为了保证这些更新操作都在下一个任务tick执行，nextTick的实现逻辑暂且不管，先看一下flushSchedulerQueue方法</p> <div class="language- extra-class"><pre class="language-text"><code>function flushSchedulerQueue () {
+  currentFlushTimestamp = getNow()
+  flushing = true
+  let watcher, id
+
+  queue.sort((a, b) =&gt; a.id - b.id)
+
+  for (index = 0; index &lt; queue.length; index++) {
+    watcher = queue[index]
+    if (watcher.before) {
+      watcher.before()
+    }
+    id = watcher.id
+    has[id] = null
+    watcher.run()
+    // in dev build, check and stop circular updates.
+    if (process.env.NODE_ENV !== 'production' &amp;&amp; has[id] != null) {
+      circular[id] = (circular[id] || 0) + 1
+      if (circular[id] &gt; MAX_UPDATE_COUNT) {
+        warn(
+          'You may have an infinite update loop ' + (
+            watcher.user
+              ? `in watcher with expression &quot;${watcher.expression}&quot;`
+              : `in a component render function.`
+          ),
+          watcher.vm
+        )
+        break
+      }
+    }
+  }
+
+  // keep copies of post queues before resetting state
+  const activatedQueue = activatedChildren.slice()
+  const updatedQueue = queue.slice()
+
+  resetSchedulerState()
+
+  // call component updated and activated hooks
+  callActivatedHooks(activatedQueue)
+  callUpdatedHooks(updatedQueue)
+
+  // devtool hook
+  /* istanbul ignore if */
+  if (devtools &amp;&amp; config.devtools) {
+    devtools.emit('flush')
+  }
+}
+</code></pre></div><p>核心逻辑是遍历watcher执行run方法，打开mysrc/core/observer/watcher.js查找run方法</p> <div class="language- extra-class"><pre class="language-text"><code>run () {
+  if (this.active) {
+    const value = this.get()
+    if (
+      value !== this.value ||
+      isObject(value) ||
+      this.deep
+    ) {
+      // set new value
+      const oldValue = this.value
+      this.value = value
+      if (this.user) {
+        const info = `callback for watcher &quot;${this.expression}&quot;`
+        invokeWithErrorHandling(this.cb, this.vm, [value, oldValue], this.vm, info)
+      } else {
+        this.cb.call(this.vm, value, oldValue)
+      }
+    }
+  }
+}
+</code></pre></div><p>run方法首先调用this.get方法求值，this.get内部会执行this.getter方法，对于renderWatcher前面分析this.getter就是传给Watcher的updateComponent方法，所以在updateComponent内部会执行_render方法，从而实现重新渲染的效果。</p> <p>this.user为true时表示这个watcher是用户自己写的watcher，这里渲染watcher是vue内置的watcher。最终都是执行this.cb方法。其实invokeWithErrorHandling的作用就是把this.cb放在try...catch结构体执行，为了方便捕获错误。事实上我们通常在vue中这样使用watch</p> <div class="language- extra-class"><pre class="language-text"><code>vm.$watch('a.b.c', function (newVal, oldVal) {
+  // 做点什么
+})
+// 或者
+watch: {
+  // 如果 `question` 发生改变，这个函数就会运行
+  question: function (newQuestion, oldQuestion) {
+    this.answer = 'Waiting for you to stop typing...'
+    this.debouncedGetAnswer()
+  }
+}
+</code></pre></div><p>调用this.cb回调方法时把新旧值都传给了cb，所以用户自己写的watch能在回调方法里面获取新值和旧值。对于renderWatcher，this.cb是个空函数noop。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/the-blog/observer/Watcher/" class="prev">
+        Watcher
+      </a></span> <!----></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/the-blog/assets/js/app.be1bf052.js" defer></script><script src="/the-blog/assets/js/2.233f3245.js" defer></script><script src="/the-blog/assets/js/15.8509a816.js" defer></script>
+  </body>
+</html>

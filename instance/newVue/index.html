@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>new Vue做了什么 | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析 从new Vue源码还原">
+    
+    <link rel="preload" href="/the-blog/assets/css/0.styles.5847df6a.css" as="style"><link rel="preload" href="/the-blog/assets/js/app.be1bf052.js" as="script"><link rel="preload" href="/the-blog/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/the-blog/assets/js/11.71c5d6b7.js" as="script"><link rel="prefetch" href="/the-blog/assets/js/10.d64c4eff.js"><link rel="prefetch" href="/the-blog/assets/js/12.11daf096.js"><link rel="prefetch" href="/the-blog/assets/js/13.f69b548d.js"><link rel="prefetch" href="/the-blog/assets/js/14.d1ad4cff.js"><link rel="prefetch" href="/the-blog/assets/js/15.8509a816.js"><link rel="prefetch" href="/the-blog/assets/js/16.8d119a8f.js"><link rel="prefetch" href="/the-blog/assets/js/17.af1786ea.js"><link rel="prefetch" href="/the-blog/assets/js/18.a98290de.js"><link rel="prefetch" href="/the-blog/assets/js/19.19f57d70.js"><link rel="prefetch" href="/the-blog/assets/js/20.280bb4ea.js"><link rel="prefetch" href="/the-blog/assets/js/21.6e34cef2.js"><link rel="prefetch" href="/the-blog/assets/js/22.6a817ce7.js"><link rel="prefetch" href="/the-blog/assets/js/23.b2f20c9f.js"><link rel="prefetch" href="/the-blog/assets/js/24.1c74258d.js"><link rel="prefetch" href="/the-blog/assets/js/25.9372330d.js"><link rel="prefetch" href="/the-blog/assets/js/3.e85ca41f.js"><link rel="prefetch" href="/the-blog/assets/js/4.05f254cc.js"><link rel="prefetch" href="/the-blog/assets/js/5.aa528bc2.js"><link rel="prefetch" href="/the-blog/assets/js/6.73a8f323.js"><link rel="prefetch" href="/the-blog/assets/js/7.f3388b10.js"><link rel="prefetch" href="/the-blog/assets/js/8.5af9c977.js"><link rel="prefetch" href="/the-blog/assets/js/9.12eb1627.js">
+    <link rel="stylesheet" href="/the-blog/assets/css/0.styles.5847df6a.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/the-blog/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/the-blog/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>准备工作</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/the-blog/simple/" class="sidebar-link">提取简易版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>创建Vue实例</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/the-blog/instance/newVue/" aria-current="page" class="active sidebar-link">new Vue做了什么</a></li><li><a href="/the-blog/instance/mount/" class="sidebar-link">mount</a></li><li><a href="/the-blog/instance/render/" class="sidebar-link">Render</a></li><li><a href="/the-blog/instance/VNode/" class="sidebar-link">VNode</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Observer</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="new-vue做了什么"><a href="#new-vue做了什么" class="header-anchor">#</a> new Vue做了什么</h1> <p>本章基于<a href="https://github.com/lo4396ve/vue-analysis/tree/simple" target="_blank" rel="noopener noreferrer">vue简易版<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>分析，建议先阅读简易版代码，后面的篇幅贴出的代码也是基于这个版本，如果没有读过简易版，也可以在本地看着vue源码跟随后面文章节奏，因为它们的逻辑是一样的，只不过简易版忽略了一些用不到的逻辑。</p> <p>打开mysrc/core/instance/index.js,</p> <div class="language- extra-class"><pre class="language-text"><code>import { initMixin } from './init'
+...
+function Vue (options) {
+  // init方法啊在initMixin被定义
+  this._init(options)
+}
+...
+
+initMixin(Vue)
+</code></pre></div><p>_init方法在mysrc/core/instance/init.js定义</p> <div class="language- extra-class"><pre class="language-text"><code>export function initMixin (Vue) {
+  Vue.prototype._init = function (options) {
+    console.log('_init')
+    const vm = this
+    // a uid
+    vm._uid = uid++
+
+    // a flag to avoid this being observed
+    /*一个防止vm实例自身被观察的标志位*/
+    vm._isVue = true
+    // merge options 
+    if (options &amp;&amp; options._isComponent) {
+      // optimize internal component instantiation
+      // since dynamic options merging is pretty slow, and none of the
+      // internal component options needs special treatment.
+      initInternalComponent(vm, options)
+    } else {
+      vm.$options = mergeOptions(
+        resolveConstructorOptions(vm.constructor),
+        options || {},
+        vm
+      )
+    }
+    vm._renderProxy = vm
+    vm._self = vm
+    initRender(vm)
+    initState(vm)
+
+    if (vm.$options.el) {
+      vm.$mount(vm.$options.el)
+    }
+  }
+}
+</code></pre></div><p>_init方法主要做了合并配置、初始化渲染方法、初始化watcher工作。这些工作无非是为了后续的挂载工作做准备，挂载就是把vue组件生成的虚拟挂载到浏览器页面。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/the-blog/simple/" class="prev">
+        提取简易版
+      </a></span> <span class="next"><a href="/the-blog/instance/mount/">
+        mount
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/the-blog/assets/js/app.be1bf052.js" defer></script><script src="/the-blog/assets/js/2.233f3245.js" defer></script><script src="/the-blog/assets/js/11.71c5d6b7.js" defer></script>
+  </body>
+</html>

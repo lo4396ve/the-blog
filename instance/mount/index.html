@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>mount | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析 从new Vue源码还原">
+    
+    <link rel="preload" href="/the-blog/assets/css/0.styles.5847df6a.css" as="style"><link rel="preload" href="/the-blog/assets/js/app.be1bf052.js" as="script"><link rel="preload" href="/the-blog/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/the-blog/assets/js/10.d64c4eff.js" as="script"><link rel="prefetch" href="/the-blog/assets/js/11.71c5d6b7.js"><link rel="prefetch" href="/the-blog/assets/js/12.11daf096.js"><link rel="prefetch" href="/the-blog/assets/js/13.f69b548d.js"><link rel="prefetch" href="/the-blog/assets/js/14.d1ad4cff.js"><link rel="prefetch" href="/the-blog/assets/js/15.8509a816.js"><link rel="prefetch" href="/the-blog/assets/js/16.8d119a8f.js"><link rel="prefetch" href="/the-blog/assets/js/17.af1786ea.js"><link rel="prefetch" href="/the-blog/assets/js/18.a98290de.js"><link rel="prefetch" href="/the-blog/assets/js/19.19f57d70.js"><link rel="prefetch" href="/the-blog/assets/js/20.280bb4ea.js"><link rel="prefetch" href="/the-blog/assets/js/21.6e34cef2.js"><link rel="prefetch" href="/the-blog/assets/js/22.6a817ce7.js"><link rel="prefetch" href="/the-blog/assets/js/23.b2f20c9f.js"><link rel="prefetch" href="/the-blog/assets/js/24.1c74258d.js"><link rel="prefetch" href="/the-blog/assets/js/25.9372330d.js"><link rel="prefetch" href="/the-blog/assets/js/3.e85ca41f.js"><link rel="prefetch" href="/the-blog/assets/js/4.05f254cc.js"><link rel="prefetch" href="/the-blog/assets/js/5.aa528bc2.js"><link rel="prefetch" href="/the-blog/assets/js/6.73a8f323.js"><link rel="prefetch" href="/the-blog/assets/js/7.f3388b10.js"><link rel="prefetch" href="/the-blog/assets/js/8.5af9c977.js"><link rel="prefetch" href="/the-blog/assets/js/9.12eb1627.js">
+    <link rel="stylesheet" href="/the-blog/assets/css/0.styles.5847df6a.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/the-blog/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/the-blog/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>准备工作</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/the-blog/simple/" class="sidebar-link">提取简易版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>创建Vue实例</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/the-blog/instance/newVue/" class="sidebar-link">new Vue做了什么</a></li><li><a href="/the-blog/instance/mount/" aria-current="page" class="active sidebar-link">mount</a></li><li><a href="/the-blog/instance/render/" class="sidebar-link">Render</a></li><li><a href="/the-blog/instance/VNode/" class="sidebar-link">VNode</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Observer</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="mount"><a href="#mount" class="header-anchor">#</a> mount</h1> <p>前面的_init方法已经为挂载做好了准备，下面分析一下具体是如何挂载的。</p> <p>开发过vue项目的应该都比较熟悉项目入口有一个main.js文件</p> <div class="language- extra-class"><pre class="language-text"><code>new Vue({
+  render: h =&gt; {
+    return h(App)
+  },
+}).$mount('#app')
+</code></pre></div><p>这个$mount方法就是暴露出来用于挂载实例的。许多地方都定义了$mount方法，有在原型上直接定义的$mount方法，还有在platform目录下各个不同打包入口也重新定义了$mount方法。之所以这样设计，是把一些通用的逻辑定义在原型上的$mount，针对不同环境，再扩展对应环境需要的特有逻辑。</p> <p>platform/web/entry-runtime.js</p> <div class="language- extra-class"><pre class="language-text"><code>import Vue from './runtime/index'
+
+export default Vue
+</code></pre></div><p>我们重点研究的runtime-only版本的入口文件并没有扩展和重写原型上定义的$mount方法，查看原型上的$mount方法，原型$mount定义在platform/web/runtime/index.js:</p> <div class="language- extra-class"><pre class="language-text"><code>import Vue from 'core/index'
+import { mountComponent } from 'core/instance/lifecycle'
+import {
+  query,
+} from 'web/util/index'
+Vue.prototype.$mount = function (
+  el
+) {
+  el = el &amp;&amp; query(el);
+  return mountComponent(this, el)
+}
+</code></pre></div><p>$mount方法接受 el参数，它表示挂载的元素，可以是字符串，也可以是 DOM 对象，如果是字符串在浏览器环境下会调用 query 方法转换成 DOM 对象，最后再调用mountComponent方法，定义在mysrc/core/instance/lifecycle.js 文件中</p> <div class="language- extra-class"><pre class="language-text"><code>export function mountComponent (
+  vm,
+  el,
+) {
+  vm.$el = el
+  if (!vm.$options.render) {
+    vm.$options.render = createEmptyVNode
+  }
+  // callHook(vm, 'beforeMount')
+
+  let updateComponent
+  /* istanbul ignore if */
+  updateComponent = () =&gt; {
+    vm._update(vm._render())
+  }
+
+  updateComponent();
+
+  // we set this to vm._watcher inside the watcher's constructor
+  // since the watcher's initial patch may call $forceUpdate (e.g. inside child
+  // component's mounted hook), which relies on vm._watcher being already defined
+  function noop() {}
+  new Watcher(vm, updateComponent, noop, {
+    before () {
+      if (vm._isMounted &amp;&amp; !vm._isDestroyed) {
+        // callHook(vm, 'beforeUpdate')
+      }
+    }
+  }, true /* isRenderWatcher */)
+  
+
+  // manually mounted instance, call mounted on self
+  // mounted is called for render-created child components in its inserted hook
+  if (vm.$vnode == null) {
+    vm._isMounted = true
+    // callHook(vm, 'mounted')
+  }
+  return vm
+}
+</code></pre></div><p>这段代码的核心是updateComponent，创建一个渲染Watcher，Watcher的逻辑会在后面介绍响应式的章节分析，目前只需要知道Watcher的内部会调用updateComponent就足够了。而updateComponent方法中会调用vm._update方法，vm._update方法接受vm._render方法的返回结果作为参数，实际上vm._render方法返回的就是虚拟dom（VNode）。下面就开始分析_render方法的实现。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/the-blog/instance/newVue/" class="prev">
+        new Vue做了什么
+      </a></span> <span class="next"><a href="/the-blog/instance/render/">
+        Render
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/the-blog/assets/js/app.be1bf052.js" defer></script><script src="/the-blog/assets/js/2.233f3245.js" defer></script><script src="/the-blog/assets/js/10.d64c4eff.js" defer></script>
+  </body>
+</html>

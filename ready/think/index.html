@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>动手前的思考 | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析 从new Vue源码还原">
+    
+    <link rel="preload" href="/the-blog/assets/css/0.styles.5847df6a.css" as="style"><link rel="preload" href="/the-blog/assets/js/app.be1bf052.js" as="script"><link rel="preload" href="/the-blog/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/the-blog/assets/js/23.b2f20c9f.js" as="script"><link rel="prefetch" href="/the-blog/assets/js/10.d64c4eff.js"><link rel="prefetch" href="/the-blog/assets/js/11.71c5d6b7.js"><link rel="prefetch" href="/the-blog/assets/js/12.11daf096.js"><link rel="prefetch" href="/the-blog/assets/js/13.f69b548d.js"><link rel="prefetch" href="/the-blog/assets/js/14.d1ad4cff.js"><link rel="prefetch" href="/the-blog/assets/js/15.8509a816.js"><link rel="prefetch" href="/the-blog/assets/js/16.8d119a8f.js"><link rel="prefetch" href="/the-blog/assets/js/17.af1786ea.js"><link rel="prefetch" href="/the-blog/assets/js/18.a98290de.js"><link rel="prefetch" href="/the-blog/assets/js/19.19f57d70.js"><link rel="prefetch" href="/the-blog/assets/js/20.280bb4ea.js"><link rel="prefetch" href="/the-blog/assets/js/21.6e34cef2.js"><link rel="prefetch" href="/the-blog/assets/js/22.6a817ce7.js"><link rel="prefetch" href="/the-blog/assets/js/24.1c74258d.js"><link rel="prefetch" href="/the-blog/assets/js/25.9372330d.js"><link rel="prefetch" href="/the-blog/assets/js/3.e85ca41f.js"><link rel="prefetch" href="/the-blog/assets/js/4.05f254cc.js"><link rel="prefetch" href="/the-blog/assets/js/5.aa528bc2.js"><link rel="prefetch" href="/the-blog/assets/js/6.73a8f323.js"><link rel="prefetch" href="/the-blog/assets/js/7.f3388b10.js"><link rel="prefetch" href="/the-blog/assets/js/8.5af9c977.js"><link rel="prefetch" href="/the-blog/assets/js/9.12eb1627.js">
+    <link rel="stylesheet" href="/the-blog/assets/css/0.styles.5847df6a.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/the-blog/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/the-blog/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>准备工作</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/the-blog/ready/download/" class="sidebar-link">下载源码</a></li><li><a href="/the-blog/ready/structure/" class="sidebar-link">目录结构</a></li><li><a href="/the-blog/ready/think/" aria-current="page" class="active sidebar-link">动手前的思考</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/the-blog/ready/think/#如何使用" class="sidebar-link">如何使用</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/think/#可以做什么" class="sidebar-link">可以做什么</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/think/#是什么" class="sidebar-link">是什么</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/think/#总结" class="sidebar-link">总结</a></li></ul></li></ul></section></li><li><a href="/the-blog/simple/" class="sidebar-link">提取简易版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>创建Vue实例</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Observer</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="动手前的思考"><a href="#动手前的思考" class="header-anchor">#</a> 动手前的思考</h1> <p>如果让你高仿一个vue，你应该怎么做？</p> <p>一个演员要想演好一个角色，必须先了解这个角色。我们也是一样，要想高仿一个东西，那么首先应该去了解他，从他是怎么使用的、他能干什么、他是什么？这三个问题出发先思考一下。</p> <h2 id="如何使用"><a href="#如何使用" class="header-anchor">#</a> 如何使用</h2> <p>先了解vue是怎么使用的，用过vue-cli搭建过项目的应该都清楚，项目入口文件main.js：</p> <div class="language- extra-class"><pre class="language-text"><code>import Vue from 'vue'
+import App from './App.vue'
+
+new Vue({
+  render: h =&gt; {
+    return h(App)
+  },
+}).$mount('#app')
+</code></pre></div><p>从main.js可以猜出来，既然使用了new Vue，说明Vue是一个构造函数或者一个class类，还能看出来在Vue这个构造方法或者这个类上面还有一个$mount，大胆的猜一下$mount方法还是一个静态方法。现在脑子里已经有一个Vue的模型了，大致上就是一个含有$mount静态方法的构造函数或者类。</p> <h2 id="可以做什么"><a href="#可以做什么" class="header-anchor">#</a> 可以做什么</h2> <p>接着再考虑第二个问题，vue可以做什么。还是看main.js，这短短的几行代码就可以把App这个组件渲染到html页面上，结合它的用法，可以猜到肯定是传的render方法把App组件转化成了浏览器认识的dom，然后用$mount方法把dom添加在id为app的这个div上。
+那么好了，现在可以再大胆的猜一下，render这个函数的作用就是把组件变成dom的，因为要想用js创建dom，必须使用document提供的一些创建dom的方法，那么很有可能最后就是调用的最常用的doeument.createElement方法。$mount的作用是把创建的dom放在html中，那么很有可能在其内部就是使用的document.getElementById('#app').appendChild(dom)。</p> <p>目前为止上面都是一些猜测，可以提前告诉大家，上面基本上都猜对了，起码实现原理是对的。这并不是因为我看过源码之后才说的马后炮，因为就从mian.js这几行代码来看，似乎只有这一种方式能最好的实现。</p> <p>现在还剩一个问题就是Vue到底是一个构造函数还是一个class类，说实话从main.js确实无法准确判断，那么就继续思考最后一个问题。</p> <h2 id="是什么"><a href="#是什么" class="header-anchor">#</a> 是什么</h2> <p>结合前面的分析，还剩一件事没有确定，就是Vue到底是一个构造函数还是一个class类的问题，那么只有打开Vue源码去看，打开准备好的源码，找到src/core/instace/index.js：</p> <div class="language- extra-class"><pre class="language-text"><code>...
+
+function Vue (options) {
+  if (process.env.NODE_ENV !== 'production' &amp;&amp;
+    !(this instanceof Vue)
+  ) {
+    warn('Vue is a constructor and should be called with the `new` keyword')
+  }
+  this._init(options)
+}
+
+...
+
+export default Vue
+
+</code></pre></div><p>真相大白是一个构造函数，至于为什么是一个构造函数而不是class，暂时先不管后面再分析。</p> <p>继续分析main.js，还会发现一个问题，render还会接受一个参数h，从h(App)的使用方式来看，h也是一个函数，那么h到底是干什么的，不妨先看看h(App)会返回一个什么结果，把main.js改造一下：</p> <div class="language- extra-class"><pre class="language-text"><code>import Vue from './vue.runtime.esm.js'
+import App from './App.vue'
+
+new Vue({
+  render: h =&gt; {
+    const result = h(App)
+    console.log(result)
+    return result
+  },
+}).$mount('#app')
+</code></pre></div><p>运行项目，打印一下h(App)的结果，发现结果是一个VNode类型的js对象，包含children、child、elm、data等属性，并且其child属性是一个VueComponent类型的对象，点开child发现其下面还有一些$attrs、$children、$el、$parent属性。有这些信息，估计大家都猜出来了，外层的VNode有child属性，child内部有$parent属性，很明显这是一个具有父子关系的数据结构，同时发现elm和$el都是指向了页面的真实dom。可以假设VNode和VueComponent都是vue创建的虚拟dom。</p> <p>为什么一口咬定VNode和VueComponent就是虚拟dom呢？回答这个问题之前先思考一个问题什么是真实dom。后面这个问题很好解答，写个dom.html看一下:</p> <div class="language- extra-class"><pre class="language-text"><code>&lt;html&gt;
+&lt;head&gt;
+  &lt;script&gt;
+    window.onload = function() {
+      const mydiv = document.getElementById('mydiv');
+      console.dir(mydiv)
+    }
+  &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id=&quot;mydiv&quot;&gt;
+    &lt;p&gt;test&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div><p>打印出来的其实也是一个对象，所谓的真实dom也是一个js对象，包含非常多的属性，其中也有children属性指向p元素，而p元素也有parentNode属性指向div元素，那么虚拟dom实际上也是一个js对象，内部也包含了许多描述这个虚拟dom的属性。vue之所以自创虚拟dom而不是使用真实dom，这就回到了大家常说的js操作dom性能差的问题，vue使用自己的一套虚拟dom这一结构，在渲染之前都是以js对象形式存在，并没有真实dom，所以vue操作一个虚拟dom，就是操作一个对象这么简单。由此也回答了上面的问题，一口咬定VNode和VueComponent就是虚拟dom就是因为打印出来的VNode和VueComponent和真实的dom对象长得像。</p> <h2 id="总结"><a href="#总结" class="header-anchor">#</a> 总结</h2> <p>经过上面几个问题的分析，对vue基本有一个概念了，甚至脑海里已经有一个vue的模型了。此时对vue源码的解析已经迈出第一步了，但是光靠猜无法理解到vue的精髓，还得深入到源码去解读。
+上面说了这么多，最重要的是学会分析问题的思路，而不仅仅是掌握了一个简易版的vue模型，深入到源码很多地方还会继续使用这种思路去分析难以理解的代码块。掌握思路更重要。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/the-blog/ready/structure/" class="prev">
+        目录结构
+      </a></span> <span class="next"><a href="/the-blog/simple/">
+        提取简易版
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/the-blog/assets/js/app.be1bf052.js" defer></script><script src="/the-blog/assets/js/2.233f3245.js" defer></script><script src="/the-blog/assets/js/23.b2f20c9f.js" defer></script>
+  </body>
+</html>

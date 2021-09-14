@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Watcher | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析 从new Vue源码还原">
+    
+    <link rel="preload" href="/the-blog/assets/css/0.styles.5847df6a.css" as="style"><link rel="preload" href="/the-blog/assets/js/app.be1bf052.js" as="script"><link rel="preload" href="/the-blog/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/the-blog/assets/js/18.a98290de.js" as="script"><link rel="prefetch" href="/the-blog/assets/js/10.d64c4eff.js"><link rel="prefetch" href="/the-blog/assets/js/11.71c5d6b7.js"><link rel="prefetch" href="/the-blog/assets/js/12.11daf096.js"><link rel="prefetch" href="/the-blog/assets/js/13.f69b548d.js"><link rel="prefetch" href="/the-blog/assets/js/14.d1ad4cff.js"><link rel="prefetch" href="/the-blog/assets/js/15.8509a816.js"><link rel="prefetch" href="/the-blog/assets/js/16.8d119a8f.js"><link rel="prefetch" href="/the-blog/assets/js/17.af1786ea.js"><link rel="prefetch" href="/the-blog/assets/js/19.19f57d70.js"><link rel="prefetch" href="/the-blog/assets/js/20.280bb4ea.js"><link rel="prefetch" href="/the-blog/assets/js/21.6e34cef2.js"><link rel="prefetch" href="/the-blog/assets/js/22.6a817ce7.js"><link rel="prefetch" href="/the-blog/assets/js/23.b2f20c9f.js"><link rel="prefetch" href="/the-blog/assets/js/24.1c74258d.js"><link rel="prefetch" href="/the-blog/assets/js/25.9372330d.js"><link rel="prefetch" href="/the-blog/assets/js/3.e85ca41f.js"><link rel="prefetch" href="/the-blog/assets/js/4.05f254cc.js"><link rel="prefetch" href="/the-blog/assets/js/5.aa528bc2.js"><link rel="prefetch" href="/the-blog/assets/js/6.73a8f323.js"><link rel="prefetch" href="/the-blog/assets/js/7.f3388b10.js"><link rel="prefetch" href="/the-blog/assets/js/8.5af9c977.js"><link rel="prefetch" href="/the-blog/assets/js/9.12eb1627.js">
+    <link rel="stylesheet" href="/the-blog/assets/css/0.styles.5847df6a.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/the-blog/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/the-blog/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>准备工作</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/the-blog/simple/" class="sidebar-link">提取简易版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>创建Vue实例</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Observer</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/the-blog/observer/state/" class="sidebar-link">state</a></li><li><a href="/the-blog/observer/Observer/" class="sidebar-link">Observe</a></li><li><a href="/the-blog/observer/Dep/" class="sidebar-link">Dep</a></li><li><a href="/the-blog/observer/Watcher/" aria-current="page" class="active sidebar-link">Watcher</a></li><li><a href="/the-blog/observer/Notify/" class="sidebar-link">Notify</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="watcher"><a href="#watcher" class="header-anchor">#</a> Watcher</h1> <p>下面看一下Watcher的实现，打开mysrc/core/observer/watcher.js</p> <div class="language- extra-class"><pre class="language-text"><code>export default class Watcher {
+  constructor (
+    vm,
+    expOrFn,
+    cb,
+    options,
+    isRenderWatcher
+  ) {
+    this.vm = vm
+    if (isRenderWatcher) {
+      vm._watcher = this
+    }
+    vm._watchers.push(this)
+    // options
+    if (options) {
+      this.deep = !!options.deep
+      this.user = !!options.user
+      this.lazy = !!options.lazy
+      this.sync = !!options.sync
+      this.before = options.before
+    } else {
+      this.deep = this.user = this.lazy = this.sync = false
+    }
+    this.cb = cb
+    this.id = ++uid // uid for batching
+    this.active = true
+    this.dirty = this.lazy // for lazy watchers
+    this.deps = []
+    this.newDeps = []
+    this.depIds = new Set()
+    this.newDepIds = new Set()
+    this.expression = process.env.NODE_ENV !== 'production'
+      ? expOrFn.toString()
+      : ''
+    // parse expression for getter
+    if (typeof expOrFn === 'function') {
+      this.getter = expOrFn
+    } else {
+      this.getter = parsePath(expOrFn)
+      if (!this.getter) {
+        this.getter = noop
+        process.env.NODE_ENV !== 'production' &amp;&amp; warn(
+          `Failed watching path: &quot;${expOrFn}&quot; ` +
+          'Watcher only accepts simple dot-delimited paths. ' +
+          'For full control, use a function instead.',
+          vm
+        )
+      }
+    }
+    this.value = this.lazy
+      ? undefined
+      : this.get()
+  }
+
+  /**
+   * Evaluate the getter, and re-collect dependencies.
+   */
+  get () {
+    pushTarget(this)
+    let value
+    const vm = this.vm
+    try {
+      value = this.getter.call(vm, vm)
+    } catch (e) {
+      if (this.user) {
+        handleError(e, vm, `getter for watcher &quot;${this.expression}&quot;`)
+      } else {
+        throw e
+      }
+    } finally {
+      // &quot;touch&quot; every property so they are all tracked as
+      // dependencies for deep watching
+      if (this.deep) {
+        traverse(value)
+      }
+      popTarget()
+      this.cleanupDeps()
+    }
+    return value
+  }
+
+  /**
+   * Add a dependency to this directive.
+   */
+  addDep (dep) {
+    const id = dep.id
+    if (!this.newDepIds.has(id)) {
+      this.newDepIds.add(id)
+      this.newDeps.push(dep)
+      if (!this.depIds.has(id)) {
+        dep.addSub(this)
+      }
+    }
+  }
+
+  /**
+   * Clean up for dependency collection.
+   */
+  cleanupDeps () {
+    let i = this.deps.length
+    while (i--) {
+      const dep = this.deps[i]
+      if (!this.newDepIds.has(dep.id)) {
+        dep.removeSub(this)
+      }
+    }
+    let tmp = this.depIds
+    this.depIds = this.newDepIds
+    this.newDepIds = tmp
+    this.newDepIds.clear()
+    tmp = this.deps
+    this.deps = this.newDeps
+    this.newDeps = tmp
+    this.newDeps.length = 0
+  }
+
+  /**
+   * Subscriber interface.
+   * Will be called when a dependency changes.
+   */
+  update () {
+    /* istanbul ignore else */
+    if (this.lazy) {
+      this.dirty = true
+    } else if (this.sync) {
+      this.run()
+    } else {
+      queueWatcher(this)
+    }
+  }
+
+  /**
+   * Scheduler job interface.
+   * Will be called by the scheduler.
+   */
+  run () {
+    if (this.active) {
+      const value = this.get()
+      if (
+        value !== this.value ||
+        // Deep watchers and watchers on Object/Arrays should fire even
+        // when the value is the same, because the value may
+        // have mutated.
+        isObject(value) ||
+        this.deep
+      ) {
+        // set new value
+        const oldValue = this.value
+        this.value = value
+        if (this.user) {
+          const info = `callback for watcher &quot;${this.expression}&quot;`
+          invokeWithErrorHandling(this.cb, this.vm, [value, oldValue], this.vm, info)
+        } else {
+          this.cb.call(this.vm, value, oldValue)
+        }
+      }
+    }
+  }
+
+  /**
+   * Evaluate the value of the watcher.
+   * This only gets called for lazy watchers.
+   */
+  evaluate () {
+    this.value = this.get()
+    this.dirty = false
+  }
+
+  /**
+   * Depend on all deps collected by this watcher.
+   */
+  depend () {
+    let i = this.deps.length
+    while (i--) {
+      this.deps[i].depend()
+    }
+  }
+
+  /**
+   * Remove self from all dependencies' subscriber list.
+   */
+  teardown () {
+    if (this.active) {
+      // remove self from vm's watcher list
+      // this is a somewhat expensive operation so we skip it
+      // if the vm is being destroyed.
+      if (!this.vm._isBeingDestroyed) {
+        remove(this.vm._watchers, this)
+      }
+      let i = this.deps.length
+      while (i--) {
+        this.deps[i].removeSub(this)
+      }
+      this.active = false
+    }
+  }
+}
+</code></pre></div><p>Watcher定义了一些与dep相关的方法，单存看Watcher的逻辑比较难理解，结合之前的updateComponent方法分析逻辑就会比较清晰，在Vue的mount过程中，mountComponent函数预留的一段代码：</p> <div class="language- extra-class"><pre class="language-text"><code>let updateComponent
+  
+updateComponent = () =&gt; {
+  vm._update(vm._render())
+}
+
+new Watcher(vm, updateComponent, noop, {
+  before () {
+    if (vm._isMounted &amp;&amp; !vm._isDestroyed) {
+      // callHook(vm, 'beforeUpdate')
+    }
+  }
+}, true /* isRenderWatcher */)
+</code></pre></div><p>new Watcher传了五个参数，第一个是当前实例vm，第二个是updateComponent，第三个是一个空函数noop，第四个是一个对象，包含了一个before钩子函数，第五个参数是用来通知Watcher当前创建的是一个renderWatcher。</p> <p>还记得最一开始的那个形象的比喻，watcher代表具有专项技能的工具人，那renderWatcher的意思就是代表当前是一个具备render渲染功能的watcher，所有需要执行渲染逻辑的地方都得通过renderWatcher，而data响应式就是当数据变化是执行渲染逻辑，所以每一个响应式的data数据都需要把renderWatcher收集起来，当数据发生变化是通过拦截set方法执行renderWatcher的渲染逻辑。赋予renderWatcher渲染功能，就是通过传给Watcher的第二个参数updateComponent实现的。</p> <p>实际上面new Watcher时，在Watcher内部的执行逻辑是首先解析传进来的参数，expOrFn参数有两种类型情况，可以是function类型也可以是String类型，expOrFn传字符串的情况后面再分析，现在expOrFn传的就是updateComponent函数，所以this.getter = expOrFn，最后由于lazy的值为false，执行this.get方法。</p> <p>在this.get方法内部执行了pushTarget(this)方法，this就是当前创建的renderWatcher实例对象。再回顾一下dep定义的pushTarget方法：</p> <div class="language- extra-class"><pre class="language-text"><code>export function pushTarget (target) {
+  targetStack.push(target)
+  Dep.target = target
+}
+</code></pre></div><p>通过pushTarget方法，使得Dep.target静态属性指向当前renderWatcher实例对象，然后执行this.getter方法，上面已经知道this.getter方法就是传进来的updateComponent方法，这时候开始执行updateComponent方法</p> <div class="language- extra-class"><pre class="language-text"><code>updateComponent = () =&gt; {
+  vm._update(vm._render())
+}
+</code></pre></div><p>updateComponent会执行_render方法，_render方法会访问data中的数据，由于这时data已经是响应式数据，所以会触发数据对象的getter。每个数据对象在执行defineReactive时都持有一个dep实例，在get方法中会执行dep.depend()方法，也就是Dep.target.addDep(this)，此时Dep.target是renderWatcher实例对象，回顾在Watcher中定义的addDep方法：</p> <div class="language- extra-class"><pre class="language-text"><code>addDep (dep) {
+  const id = dep.id
+  if (!this.newDepIds.has(id)) {
+    this.newDepIds.add(id)
+    this.newDeps.push(dep)
+    if (!this.depIds.has(id)) {
+      dep.addSub(this)
+    }
+  }
+}
+</code></pre></div><p>关于newDepIds的作用后面再分析，首先判断是否已经收集过当前Watcher，保证不重复收集，最后调用dep.addSub(this)方法，this就是当前wathcer实例，也就是把当前的 watcher 订阅到这个数据持有的 dep 的 subs 中。</p> <p>实现收集依赖之后判断调deep如果为true，则调用traverse方法，这个方法使用递归的方式访问value的子属性，使得子属性也完成依赖收集。</p> <p>然后执行popTarget方法：</p> <div class="language- extra-class"><pre class="language-text"><code>export function popTarget () {
+  targetStack.pop()
+  Dep.target = targetStack[targetStack.length - 1]
+}
+</code></pre></div><p>在dep中还维护了一个targetStack栈，在vue组件嵌套的情况下，在处理父子节点过程中，先实例化父节点然后再实例化子节点，所以先创建了父组件的renderWatcher，再创建子组件的renderWatcher，而_render是从子到父节点的过程，先执行子节点的_render再执行父节点的_render。父子节点的renderWatcher依次压入targetStack栈，渲染阶段先执行子节点的_render，也就触发了子节点的依赖收集，此时收集的正是子节点的renderWatcher，子节点渲染收集完成，targetStack弹出栈顶，Dep.target等于父节点的renderWatcher，这时父节点data收集的是父节点的renderWatcher。 很巧妙的用了数据结构栈的原理实现了整个收集过程。</p> <p>最后还有一个步骤执行cleanupDeps清楚依赖。</p> <div class="language- extra-class"><pre class="language-text"><code>cleanupDeps () {
+  let i = this.deps.length
+  while (i--) {
+    const dep = this.deps[i]
+    if (!this.newDepIds.has(dep.id)) {
+      dep.removeSub(this)
+    }
+  }
+  let tmp = this.depIds
+  this.depIds = this.newDepIds
+  this.newDepIds = tmp
+  this.newDepIds.clear()
+  tmp = this.deps
+  this.deps = this.newDeps
+  this.newDeps = tmp
+  this.newDeps.length = 0
+}
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/the-blog/observer/Dep/" class="prev">
+        Dep
+      </a></span> <span class="next"><a href="/the-blog/observer/Notify/">
+        Notify
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/the-blog/assets/js/app.be1bf052.js" defer></script><script src="/the-blog/assets/js/2.233f3245.js" defer></script><script src="/the-blog/assets/js/18.a98290de.js" defer></script>
+  </body>
+</html>

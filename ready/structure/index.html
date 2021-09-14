@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>目录结构 | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析 从new Vue源码还原">
+    
+    <link rel="preload" href="/the-blog/assets/css/0.styles.5847df6a.css" as="style"><link rel="preload" href="/the-blog/assets/js/app.be1bf052.js" as="script"><link rel="preload" href="/the-blog/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/the-blog/assets/js/22.6a817ce7.js" as="script"><link rel="prefetch" href="/the-blog/assets/js/10.d64c4eff.js"><link rel="prefetch" href="/the-blog/assets/js/11.71c5d6b7.js"><link rel="prefetch" href="/the-blog/assets/js/12.11daf096.js"><link rel="prefetch" href="/the-blog/assets/js/13.f69b548d.js"><link rel="prefetch" href="/the-blog/assets/js/14.d1ad4cff.js"><link rel="prefetch" href="/the-blog/assets/js/15.8509a816.js"><link rel="prefetch" href="/the-blog/assets/js/16.8d119a8f.js"><link rel="prefetch" href="/the-blog/assets/js/17.af1786ea.js"><link rel="prefetch" href="/the-blog/assets/js/18.a98290de.js"><link rel="prefetch" href="/the-blog/assets/js/19.19f57d70.js"><link rel="prefetch" href="/the-blog/assets/js/20.280bb4ea.js"><link rel="prefetch" href="/the-blog/assets/js/21.6e34cef2.js"><link rel="prefetch" href="/the-blog/assets/js/23.b2f20c9f.js"><link rel="prefetch" href="/the-blog/assets/js/24.1c74258d.js"><link rel="prefetch" href="/the-blog/assets/js/25.9372330d.js"><link rel="prefetch" href="/the-blog/assets/js/3.e85ca41f.js"><link rel="prefetch" href="/the-blog/assets/js/4.05f254cc.js"><link rel="prefetch" href="/the-blog/assets/js/5.aa528bc2.js"><link rel="prefetch" href="/the-blog/assets/js/6.73a8f323.js"><link rel="prefetch" href="/the-blog/assets/js/7.f3388b10.js"><link rel="prefetch" href="/the-blog/assets/js/8.5af9c977.js"><link rel="prefetch" href="/the-blog/assets/js/9.12eb1627.js">
+    <link rel="stylesheet" href="/the-blog/assets/css/0.styles.5847df6a.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/the-blog/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/the-blog/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>准备工作</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/the-blog/ready/download/" class="sidebar-link">下载源码</a></li><li><a href="/the-blog/ready/structure/" aria-current="page" class="active sidebar-link">目录结构</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#src目录结构" class="sidebar-link">src目录结构</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#compiler" class="sidebar-link">compiler</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#core" class="sidebar-link">core</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#platform" class="sidebar-link">platform</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#server" class="sidebar-link">server</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#sfc" class="sidebar-link">sfc</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#shares" class="sidebar-link">shares</a></li></ul></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#明确研究目标" class="sidebar-link">明确研究目标</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#打包环境" class="sidebar-link">打包环境</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#package-json" class="sidebar-link">package.json</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#入口配置信息" class="sidebar-link">入口配置信息</a></li><li class="sidebar-sub-header"><a href="/the-blog/ready/structure/#修改打包入口" class="sidebar-link">修改打包入口</a></li></ul></li></ul></li><li><a href="/the-blog/ready/think/" class="sidebar-link">动手前的思考</a></li></ul></section></li><li><a href="/the-blog/simple/" class="sidebar-link">提取简易版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>创建Vue实例</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Observer</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="目录结构"><a href="#目录结构" class="header-anchor">#</a> 目录结构</h1> <p>打开克隆下来的vue源码。</p> <p>vue使用rollup打包，不熟悉rollup也没有影响，其作用跟webpack类似，把src目录下的代码最终打包输出到dist目录。Vue源码项目本身就提供了一套完整的rollup打包平台，还提供了eslint检查机智，以及规范的Git提交日志，可以直接利用这个架子进行探索。</p> <h2 id="src目录结构"><a href="#src目录结构" class="header-anchor">#</a> src目录结构</h2> <div class="language- extra-class"><pre class="language-text"><code>src
+├── compiler
+├── core
+├── platforms
+├── server
+├── sfc
+└── shared
+</code></pre></div><p>vue目录设计的很清晰，每个目录的功能也很明确</p> <h3 id="compiler"><a href="#compiler" class="header-anchor">#</a> compiler</h3> <p>如果一个vue项目能够运行，必须把vue代码转成js代码，其中包括vue模板需要解析成 ast 语法树再组建成dom树。</p> <h3 id="core"><a href="#core" class="header-anchor">#</a> core</h3> <p>源码核心目录，也是重点研究对象。</p> <h3 id="platform"><a href="#platform" class="header-anchor">#</a> platform</h3> <p>platform目录提供了rollup打包时的入口文件。而vue不止可以运行在浏览器，也可以运行在node（服务端渲染）和weex平台上。所以platform提供了不同平台下的多个入口文件。查看package.json的script，当执行yarn build:ssr 就会在dist目录下输出服务端渲染版的vue代码。</p> <p>知道platform是干什么的，也就明确了我们应该从这个目录下手开始研究vue源码。</p> <h3 id="server"><a href="#server" class="header-anchor">#</a> server</h3> <p>服务端渲染相关的代码，不作为本篇研究对象。</p> <h3 id="sfc"><a href="#sfc" class="header-anchor">#</a> sfc</h3> <p>主要作用是把后缀为.vue的文件转成JavaScript对象。这个工具依赖上面的compiler。</p> <h3 id="shares"><a href="#shares" class="header-anchor">#</a> shares</h3> <p>提供工具类方法，这里定义的工具方法浏览器端和服务端是通用的。</p> <h2 id="明确研究目标"><a href="#明确研究目标" class="header-anchor">#</a> 明确研究目标</h2> <p>vue在浏览器、node和weex端都可以运行，这里重点研究浏览器端的vue。</p> <p>在浏览器环境引入vue有两个版本，带有编译功能（with-compiler）版本和只包含运行时（runtime-only）版本。这两种版本在<a href="https://cn.vuejs.org/v2/guide/installation.html#%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%9E%84%E5%BB%BA%E7%89%88%E6%9C%AC%E7%9A%84%E8%A7%A3%E9%87%8A" target="_blank" rel="noopener noreferrer">官方文档<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>有介绍。
+大部分vue项目都使用了webpack，webpack的vue-loader已经做了模板编译工作。为了减轻入手难度，暂且选择runtime-only版本作为研究对象。后面再详细了解编译相关的代码。</p> <h2 id="打包环境"><a href="#打包环境" class="header-anchor">#</a> 打包环境</h2> <p>由于vue源码项目已经提供了一个非常好的rollup打包架子，所以不妨在根目录创建mysrc目录，用来存放高仿版vue，把mysrc作为打包入口输出到dist。</p> <p>简单介绍一下vue源码rollup打包环境，不作为重点展开。</p> <h3 id="package-json"><a href="#package-json" class="header-anchor">#</a> package.json</h3> <p>在根目录打开package.json，scripts里面有许多命令，比如&quot;dev:esm&quot;: &quot;rollup -w -c scripts/config.js --environment TARGET:web-runtime-esm&quot;, 执行dev:esm命令，其实就是使用rollup开始打包，并启动热更新模式方便调试，platform目录下包含许多打包入口文件，TARGET:web-runtime-esm则是可以指定使用哪个文件作为打包入口。</p> <h3 id="入口配置信息"><a href="#入口配置信息" class="header-anchor">#</a> 入口配置信息</h3> <p>在根目录打开scripts/config.js，寻找web-runtime-esm：</p> <div class="language- extra-class"><pre class="language-text"><code>// Runtime only ES modules build (for bundlers)
+'web-runtime-esm': {
+  entry: resolve('web/entry-runtime.js'),
+  dest: resolve('dist/vue.runtime.esm.js'),
+  format: 'es',
+  banner
+},
+</code></pre></div><p>运行dev:esm命令指定的TARGET:web-runtime-esm，这里配置了打包入口路径为web/entry-runtime.js，输出地址为dist/vue.runtime.esm.js。至于TARGET:web-runtime-esm是如何映射到scripts/config.js并寻找到web-runtime-esm配置信息的逻辑，不在本文重点研究范围，感兴趣的话可以了解一下rollup这个工具。</p> <p>重点是resolve方法，同样在scripts/config.js文件找到resolve方法的定义：</p> <div class="language- extra-class"><pre class="language-text"><code>const resolve = p =&gt; {
+  const base = p.split('/')[0]
+  if (aliases[base]) {
+    return path.resolve(aliases[base], p.slice(base.length + 1))
+  } else {
+    return path.resolve(__dirname, '../', p)
+  }
+}
+</code></pre></div><p>resolve引入资源的根路径依赖aliases，所以如果要想让打包入口地址指向mysrc，只需要去alias.js修改即可。</p> <h3 id="修改打包入口"><a href="#修改打包入口" class="header-anchor">#</a> 修改打包入口</h3> <p>在根目录找到scripts/alias.js文件，修改为：</p> <div class="language- extra-class"><pre class="language-text"><code>const path = require('path')
+
+const resolve = p =&gt; path.resolve(__dirname, '../', p)
+
+module.exports = {
+  vue: resolve('mysrc/platforms/web/entry-runtime-with-compiler'),
+  compiler: resolve('mysrc/compiler'),
+  core: resolve('mysrc/core'),
+  shared: resolve('mysrc/shared'),
+  web: resolve('mysrc/platforms/web'),
+  weex: resolve('mysrc/platforms/weex'),
+  server: resolve('mysrc/server'),
+  sfc: resolve('mysrc/sfc')
+}
+
+</code></pre></div><p>为了方便查看文件输出，在根目录下找到dist目录，删掉dist目录下的所有文件；再执行npm run dev:esm命令打包入口就变成了mysrc目录，将会会在dist目录下产出vue.runtime.esm.js。目前还不能打包出vue.runtime.esm.js这个文件，因为mysrc目录下海没有任何代码。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/the-blog/ready/download/" class="prev">
+        下载源码
+      </a></span> <span class="next"><a href="/the-blog/ready/think/">
+        动手前的思考
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/the-blog/assets/js/app.be1bf052.js" defer></script><script src="/the-blog/assets/js/2.233f3245.js" defer></script><script src="/the-blog/assets/js/22.6a817ce7.js" defer></script>
+  </body>
+</html>
